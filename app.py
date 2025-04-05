@@ -4,13 +4,17 @@ app = Flask(__name__)
 
 @app.route("/")
 def hello_world():
-    return "<p>Hello world from cc backend!<p>"
+    print("hello")
+    return "<h1>Hello from cc backend!<h1>"
 
-@app.route('/data', methods=['POST'])
-def get_data():
-    data = request.json
-    print(data["name"])
-    return {"message": "Data received", "data": data}
+@app.route('/sentiment', methods=['POST'])
+def get_sentiment():
+    input_data = request.json
+    print(input_data)
+
+    # sentiment analysis here
+    
+    return {"input_data": input_data, "message": "hello!"}
 
 if __name__ == "__main__":
     app.run(debug=True, host='0.0.0.0', port=5000)
