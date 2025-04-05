@@ -17,6 +17,6 @@ def get_sentiment():
     return {"input_data": input_data, "message": "hello!"}
 
 if __name__ == "__main__":
-    app.run(debug=True, host='0.0.0.0', port=5000)
+    app.run(host='0.0.0.0', port=8080, debug=False)
 
     
