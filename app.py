@@ -1,17 +1,20 @@
+from dotenv import load_dotenv
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 import pickle
+import os
 
 # Sources: https://docs.python.org/3/library/pickle.html#module-pickle
 
-# Load the model pipeline (pickled model from Google Colab)
-with open("sentiment_pipeline.pkl", "rb") as f:
-    model = pickle.load(f)
-
+load_dotenv()
+API_TOKEN = os.environ.get("API_TOKEN")
 
 app = Flask(__name__)
 CORS(app)
 
+# Load the model pipeline (pickled model from Google Colab)
+with open("sentiment_pipeline.pkl", "rb") as f:
+    model = pickle.load(f)
 
 @app.route("/")
 def home():
@@ -20,14 +23,19 @@ def home():
 
 @app.route('/sentiment', methods=['POST'])
 def predict_sentiment():
+    # Token Auth 
+    auth_header = request.headers.get("Authorization", "")
+    if not auth_header or auth_header != f"Bearer {API_TOKEN}":
+        return jsonify({"error": "Unauthorized"}), 401
+
+    # Handle Input Data
     data = request.json
     text = data.get("text", "")
-
     if not text:
         return jsonify({"error": "No text provided"}), 400
-    
-    prediction = model.predict([text])[0]
 
+    # Sentiment Analysis Prediction
+    prediction = model.predict([text])[0]
     return jsonify({"result": prediction})
 
 
